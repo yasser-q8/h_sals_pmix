@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> تجميع مبيعات الوجبات بالساعة - شركة نايف للأغذية</title>
+    <title>نظام تجميع ومراجعة مبيعات المطاعم - شركة نايف للأغذية</title>
     
     <!-- Company Branding & Icons -->
     <link rel="icon" href="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg" type="image/jpeg">
@@ -17,7 +17,7 @@
     <meta name="theme-color" content="#05668D">
 
     <!-- Tailwind CSS CDN -->
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=xl0css3PoMavAx5Zb1hhjI0O6-uyPw4YEKWO7gRI76yCmXP6QAaSWhucOxqcYt4YosYeW0qMKfoz4IV5lFJyBQjQDB4eTeSvW9HZt1kUsPXXxvmddGr7Pphw-NbYHJI-3vwBddTKk38xYaEsXK66gYSWepiba1QemYQcp7T64tt_qryJmWbASBfXShyjM1wSlYARqibZvtP1xlK57vjkky2GrNf_Q451_nOKYWI6UqKfM-H5Zu5GDGFwK4xaS1uLP1QIPiQGCcEHY2G_copp07qKsITgjWfLGXmdVi2zl-6N5A1jOUymYKq5hQdrQHWVjhUuFoxTveze-pjp1Wb5zA" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTVUJJTmNtVnpjRzl1YzJWZlpHRjBZUm9fQ2pCbVpHSTNaRGszT1dReU1EZzBPRFV3TURBd05qWXdOR1E1T0RZeVpUQmxOREEwWVRRM05XRTJOVGd6TURNMVpUVVNDeElIRU5MY3NJcXRCeGdCJmZpbGVuYW1lPW5haWZfaG91cmx5X3NhbGVzX21peC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=C5xXele3kaNNW1ir16sQ4ZlarIFL2JqHkyDCJ5T8AkSCef0xcdNXhRm75fpi1kMU183ZekxQ4V00Y-H57MvEl-bDeAZBsoV8zB30oB9nWZ7pY1dqvaRUKmtKbkA0bYLJVtgdSORKL1EU3uNZOJm_DyZ0gIDEGbSTDliI1-FAaVCg07akQPrjEIUFkEtY-6ePEx0FXx-HWEPi2_FNafx-5ATuc1zo_G0mM0rdhKZjEOMnI8kAh0EUdepsaf30r5DepdaV9Ecpeu_yEPJ8Vh0jU1vW2eRspKM6lx9Iod4zIo7VhXg_P2WabGTJzMALtfkN-2FHj8SnNnvs1jQVpgt61A" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTVUJJTmNtVnpjRzl1YzJWZlpHRjBZUm9fQ2pCbFlUUXpPR1l6TWpBNE1UZzBaV1ExTURBd05qWXdOR1ZqTW1Wa05UbGlPREF5TWpjNU5qZzJPV0V5TTJabVpHRVNDeElIRU5MY3NJcXRCeGdCJmZpbGVuYW1lPW5haWZfaG91cmx5X3NhbGVzX21peC12Mi5odG1sJm9waT0xMDMxMzUwNTA"/><script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1127,7 +1127,7 @@
             }
         }
 
-        // Export Formatted PDF (Landscape A4 with Smart Section-by-Section Pagination & Company Header)
+        // Export Formatted PDF (Landscape A4 with Smart Section-by-Section Pagination, Safe Logo Loading & Chunked Processing)
         async function exportToPDFReport() {
             if (!lastRenderedReport || !lastRenderedReport.sections.length) {
                 alert('الرجاء استخراج التقرير أولاً قبل التصدير إلى PDF.');
@@ -1135,7 +1135,24 @@
             }
 
             const statusMsg = document.getElementById('export-status-msg');
-            statusMsg.innerText = 'جاري إنشاء ملف PDF منسق...';
+            statusMsg.innerText = 'جاري تجهيز صفحات PDF...';
+
+            // Preload logo safely as DataURL so html2canvas never fails due to CORS / tainted canvas
+            let safeLogoSrc = '';
+            try {
+                const imgResp = await fetch('https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg', { mode: 'cors' });
+                if (imgResp.ok) {
+                    const blob = await imgResp.blob();
+                    safeLogoSrc = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = () => resolve('');
+                        reader.readAsDataURL(blob);
+                    });
+                }
+            } catch (e) {
+                safeLogoSrc = '';
+            }
 
             const container = document.createElement('div');
             container.style.position = 'fixed';
@@ -1145,25 +1162,30 @@
             container.style.background = '#ffffff';
             container.style.direction = 'rtl';
             container.style.fontFamily = "'Segoe UI', Tahoma, sans-serif";
+            container.style.color = '#1e293b';
             document.body.appendChild(container);
 
-            const safeHeight = 750; // Safe height for A4 Landscape
+            const safeHeight = 740; // Safe content height before page break (A4 Landscape)
 
             function createPage(isFirstPage) {
                 const p = document.createElement('div');
                 p.style.width = '1122px';
-                p.style.padding = '24px';
+                p.style.padding = '22px 26px';
                 p.style.background = '#ffffff';
                 p.style.boxSizing = 'border-box';
                 
+                const logoHtml = safeLogoSrc 
+                    ? `<img src="${safeLogoSrc}" style="height:50px; border-radius:6px; object-fit:contain;">`
+                    : `<div style="height:46px; width:46px; border-radius:8px; background:#05668D; color:#ffffff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px;">NAIF</div>`;
+
                 p.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #05668D; padding-bottom:10px; margin-bottom:14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #05668D; padding-bottom:8px; margin-bottom:12px;">
                         <div style="text-align:right;">
-                            <div style="font-size:18px; font-weight:800; color:#05668D;">شركة نايف للأغذية</div>
-                            <div style="font-size:13px; font-weight:700; color:#1e293b; margin-top:2px;">${lastRenderedReport.mainTitle}</div>
-                            ${isFirstPage ? `<div style="font-size:11px; color:#64748b; margin-top:2px;">${lastRenderedReport.subTitle}</div>` : ''}
+                            <div style="font-size:17px; font-weight:800; color:#05668D;">شركة نايف للأغذية</div>
+                            <div style="font-size:12px; font-weight:700; color:#1e293b; margin-top:2px;">${lastRenderedReport.mainTitle}</div>
+                            ${isFirstPage ? `<div style="font-size:10px; color:#64748b; margin-top:2px;">${lastRenderedReport.subTitle}</div>` : ''}
                         </div>
-                        <img src="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg" crossorigin="anonymous" style="height:52px; border-radius:6px;">
+                        ${logoHtml}
                     </div>
                 `;
                 container.appendChild(p);
@@ -1173,9 +1195,11 @@
             let currentPage = createPage(true);
 
             try {
-                for (const sec of lastRenderedReport.sections) {
+                for (let sIdx = 0; sIdx < lastRenderedReport.sections.length; sIdx++) {
+                    const sec = lastRenderedReport.sections[sIdx];
+                    
                     const secTitleDiv = document.createElement('div');
-                    secTitleDiv.style.cssText = 'background:#e6f4fa; border-right:4px solid #05668D; padding:6px 12px; font-size:12px; font-weight:bold; color:#034966; margin-bottom:4px; display:flex; justify-content:space-between;';
+                    secTitleDiv.style.cssText = 'background:#e6f4fa; border-right:4px solid #05668D; padding:5px 10px; font-size:11px; font-weight:bold; color:#034966; margin-bottom:4px; display:flex; justify-content:space-between;';
                     secTitleDiv.innerHTML = `<span dir="ltr">${sec.title}</span><span>${sec.subtitle}</span>`;
                     currentPage.appendChild(secTitleDiv);
 
@@ -1187,14 +1211,14 @@
 
                     function buildTableSkeleton() {
                         const tbl = document.createElement('table');
-                        tbl.style.cssText = 'width:100%; border-collapse:collapse; font-size:9px; margin-bottom:14px; direction:ltr;';
+                        tbl.style.cssText = 'width:100%; border-collapse:collapse; font-size:8.5px; margin-bottom:12px; direction:ltr; table-layout:fixed;';
                         tbl.innerHTML = `
                             <thead>
-                                <tr style="background:#05668D; color:white;">
-                                    <th style="border:1px solid #cbd5e1; padding:4px;">#</th>
-                                    <th style="border:1px solid #cbd5e1; padding:4px; text-align:left;">Meal Name</th>
-                                    ${Array.from({length:24}, (_, h) => `<th style="border:1px solid #cbd5e1; padding:3px;">${h}</th>`).join('')}
-                                    <th style="border:1px solid #cbd5e1; padding:4px; background:#034966;">Total</th>
+                                <tr style="background:#05668D; color:#ffffff;">
+                                    <th style="border:1px solid #cbd5e1; padding:3px; width:24px;">#</th>
+                                    <th style="border:1px solid #cbd5e1; padding:3px 5px; text-align:left; width:175px;">Meal Name</th>
+                                    ${Array.from({length:24}, (_, h) => `<th style="border:1px solid #cbd5e1; padding:2px;">${h}</th>`).join('')}
+                                    <th style="border:1px solid #cbd5e1; padding:3px; background:#034966; width:44px;">Total</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -1206,14 +1230,15 @@
                     currentPage.appendChild(table);
                     let tbody = table.querySelector('tbody');
 
-                    sec.rows.forEach((r, idx) => {
+                    for (let idx = 0; idx < sec.rows.length; idx++) {
+                        const r = sec.rows[idx];
                         const tr = document.createElement('tr');
                         tr.style.background = idx % 2 === 1 ? '#f0f8ff' : '#ffffff';
                         tr.innerHTML = `
-                            <td style="border:1px solid #cbd5e1; padding:3px; text-align:center;">${idx + 1}</td>
-                            <td style="border:1px solid #cbd5e1; padding:3px 6px; text-align:left; font-weight:600;">${r.meal}</td>
-                            ${r.hrs.map(v => `<td style="border:1px solid #cbd5e1; padding:3px; text-align:center;">${v !== 0 ? v : ''}</td>`).join('')}
-                            <td style="border:1px solid #cbd5e1; padding:3px; text-align:center; font-weight:bold; background:#e6f4fa; color:#05668D;">${r.rowTotal}</td>
+                            <td style="border:1px solid #cbd5e1; padding:2.5px; text-align:center;">${idx + 1}</td>
+                            <td style="border:1px solid #cbd5e1; padding:2.5px 5px; text-align:left; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${r.meal}</td>
+                            ${r.hrs.map(v => `<td style="border:1px solid #cbd5e1; padding:2px; text-align:center;">${v !== 0 ? v : ''}</td>`).join('')}
+                            <td style="border:1px solid #cbd5e1; padding:2.5px; text-align:center; font-weight:bold; background:#e6f4fa; color:#05668D;">${r.rowTotal}</td>
                         `;
                         tbody.appendChild(tr);
 
@@ -1225,15 +1250,15 @@
                             tbody = table.querySelector('tbody');
                             tbody.appendChild(tr);
                         }
-                    });
+                    }
 
                     // Total Row
                     const totalTr = document.createElement('tr');
-                    totalTr.style.cssText = 'background:#05668D; color:white; font-weight:bold;';
+                    totalTr.style.cssText = 'background:#05668D; color:#ffffff; font-weight:bold;';
                     totalTr.innerHTML = `
-                        <td colspan="2" style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Total (${sec.title})</td>
-                        ${sec.colTotals.map(v => `<td style="border:1px solid #cbd5e1; padding:3px; text-align:center;">${v}</td>`).join('')}
-                        <td style="border:1px solid #cbd5e1; padding:4px; text-align:center; background:#034966;">${sec.grandRowSum}</td>
+                        <td colspan="2" style="border:1px solid #cbd5e1; padding:3.5px 5px; text-align:right;">Total (${sec.title})</td>
+                        ${sec.colTotals.map(v => `<td style="border:1px solid #cbd5e1; padding:2px; text-align:center;">${v}</td>`).join('')}
+                        <td style="border:1px solid #cbd5e1; padding:3.5px; text-align:center; background:#034966;">${sec.grandRowSum}</td>
                     `;
                     tbody.appendChild(totalTr);
 
@@ -1247,27 +1272,37 @@
                 }
 
                 const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('l', 'pt', 'a4'); // Landscape A4 to fit 24 hourly columns clearly
+                const pdf = new jsPDF('l', 'pt', 'a4'); // Landscape A4
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pages = Array.from(container.children);
 
                 for (let i = 0; i < pages.length; i++) {
-                    const canvas = await html2canvas(pages[i], { scale: 2, useCORS: true });
-                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                    statusMsg.innerText = `جاري تصدير صفحة ${i + 1} من ${pages.length} إلى PDF...`;
+                    // Yield to UI thread so browser stays responsive on large multi-restaurant reports
+                    await new Promise(r => setTimeout(r, 15));
+
+                    const canvas = await html2canvas(pages[i], { 
+                        scale: 1.5, 
+                        backgroundColor: '#ffffff',
+                        logging: false
+                    });
+                    const imgData = canvas.toDataURL('image/jpeg', 0.92);
                     const imgHeight = (canvas.height * pdfWidth) / canvas.width;
                     if (i > 0) pdf.addPage();
                     pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
                 }
 
                 pdf.save(`Naif_Sales_Report_${new Date().toISOString().slice(0,10)}.pdf`);
-                statusMsg.innerText = 'تم تصدير ملف PDF بنجاح!';
-                setTimeout(() => statusMsg.innerText = '', 4000);
+                statusMsg.innerText = `تم تصدير ملف PDF بنجاح (${pages.length} صفحة)!`;
+                setTimeout(() => statusMsg.innerText = '', 5000);
             } catch (err) {
-                console.error(err);
+                console.error('PDF Export Error:', err);
                 statusMsg.innerText = '';
-                alert('حدث خطأ أثناء تصدير PDF: ' + err.message);
+                alert('حدث خطأ أثناء تصدير PDF: ' + (err.message || err));
             } finally {
-                document.body.removeChild(container);
+                if (container.parentNode) {
+                    document.body.removeChild(container);
+                }
             }
         }
 
