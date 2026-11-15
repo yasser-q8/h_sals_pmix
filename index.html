@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تجميع ومراجعة مبيعات المطاعم - شركة نايف للأغذية</title>
+    
+    <!-- Company Branding & Icons -->
+    <link rel="icon" href="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg">
+    <link rel="apple-touch-icon" sizes="167x167" href="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg">
+    <meta name="apple-mobile-web-app-title" content="Naif Sales Mix">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#05668D">
+
+    <!-- Tailwind CSS CDN -->
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=xl0css3PoMavAx5Zb1hhjI0O6-uyPw4YEKWO7gRI76yCmXP6QAaSWhucOxqcYt4YosYeW0qMKfoz4IV5lFJyBQjQDB4eTeSvW9HZt1kUsPXXxvmddGr7Pphw-NbYHJI-3vwBddTKk38xYaEsXK66gYSWepiba1QemYQcp7T64tt_qryJmWbASBfXShyjM1wSlYARqibZvtP1xlK57vjkky2GrNf_Q451_nOKYWI6UqKfM-H5Zu5GDGFwK4xaS1uLP1QIPiQGCcEHY2G_copp07qKsITgjWfLGXmdVi2zl-6N5A1jOUymYKq5hQdrQHWVjhUuFoxTveze-pjp1Wb5zA" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTVUJJTmNtVnpjRzl1YzJWZlpHRjBZUm9fQ2pCbVpHSTNaRGszT1dReU1EZzBPRFV3TURBd05qWXdOR1E1T0RZeVpUQmxOREEwWVRRM05XRTJOVGd6TURNMVpUVVNDeElIRU5MY3NJcXRCeGdCJmZpbGVuYW1lPW5haWZfaG91cmx5X3NhbGVzX21peC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ExcelJS (for full styled Excel export with formulas, colors, and borders) & SheetJS (for ultra-fast reading of large 31-sheet workbooks) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    
+    <!-- jsPDF & html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; }
+        .petrol-bg { background-color: #05668D; }
+        .petrol-dark { background-color: #034966; }
+        .petrol-text { color: #05668D; }
+        .petrol-border { border-color: #05668D; }
+
+        .table-grid { border-collapse: collapse; width: 100%; }
+        .table-grid th, .table-grid td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: center; white-space: nowrap; }
+        .table-grid th { background-color: #05668D; color: white; font-weight: 600; }
+        .table-grid tr:nth-child(even) { background-color: #e6f4fa; }
+        .table-grid tr:nth-child(odd) { background-color: #ffffff; }
+        .table-grid tr:hover { background-color: #d0ebf7; }
+
+        /* Floating Stat Cards Animation */
+        .floating-stat {
+            animation: floatCard 4.5s ease-in-out infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .floating-stat:nth-child(2) { animation-delay: 0.7s; }
+        .floating-stat:nth-child(3) { animation-delay: 1.4s; }
+        .floating-stat:nth-child(4) { animation-delay: 2.1s; }
+        .floating-stat:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(5, 102, 141, 0.18);
+        }
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-7px); }
+        }
+
+        /* Developer Signature Card (Scaled down 25%, no fill, red outer border, blue text, floating) */
+        .signature-card {
+            position: fixed;
+            bottom: 18px;
+            left: 18px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #0000FF;
+            padding: 7.5px 13px;
+            border-radius: 7px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            z-index: 1000;
+            animation: floatSig 5s ease-in-out infinite;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid #FF0000;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .signature-card:hover { transform: scale(1.06); box-shadow: 0 10px 25px rgba(0,0,0,0.28); }
+        @keyframes floatSig { 
+            0% { transform: translateY(0px); } 
+            50% { transform: translateY(-11px); } 
+            100% { transform: translateY(0px); } 
+        }
+        .signature-card .name { font-size: 0.72rem; font-weight: 700; margin-bottom: 2px; color: #0000FF; }
+        .signature-card .title { font-size: 0.54rem; color: #0000FF; font-weight: 600; }
+        @media (max-width: 768px) { 
+            .signature-card { position: relative; bottom: auto; left: auto; margin: 16px auto; display: block; width: fit-content; animation: none; } 
+        }
+        @media print { .signature-card { display: none; } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <img src="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg" alt="Naif Logo" class="h-14 w-14 object-contain rounded-lg shadow border border-gray-100">
+                <div>
+                    <h1 class="text-xl font-bold petrol-text">شركة نايف للأغذية</h1>
+                    <p class="text-sm text-gray-500">نظام تجميع وتحليل مبيعات الوجبات حسب الساعة (Product Mix - OCIMS)</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="current-date-time" dir="ltr" class="text-xs bg-cyan-50 petrol-text px-3.5 py-1.5 rounded-full font-mono font-bold border border-cyan-200"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Petrol Blue Navigation Bar -->
+    <nav class="petrol-bg text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-2 py-2.5">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn px-4 py-2 rounded-lg font-semibold petrol-dark text-white transition flex items-center gap-2 whitespace-nowrap shadow-inner"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</button>
+            <button onclick="switchTab('upload')" id="btn-upload" class="tab-btn px-4 py-2 rounded-lg font-semibold hover:bg-[#045272] transition flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-file-excel"></i> تحميل ومعالجة الملفات</button>
+            <button onclick="switchTab('reports')" id="btn-reports" class="tab-btn px-4 py-2 rounded-lg font-semibold hover:bg-[#045272] transition flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-table-list"></i> التقارير والتصدير</button>
+            <button onclick="switchTab('settings')" id="btn-settings" class="tab-btn px-4 py-2 rounded-lg font-semibold hover:bg-[#045272] transition flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-sliders"></i> إعدادات المطاعم والمشرفين</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- TAB 1: DASHBOARD -->
+        <section id="tab-dashboard" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="floating-stat bg-white p-5 rounded-xl shadow-md border-r-4 petrol-border flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500">إجمالي المطاعم المسجلة</p>
+                        <h3 id="stat-total-restaurants" dir="ltr" class="text-2xl font-extrabold text-gray-800 mt-1 text-right font-mono">0</h3>
+                    </div>
+                    <div class="p-3 bg-cyan-50 petrol-text rounded-xl text-xl"><i class="fa-solid fa-store"></i></div>
+                </div>
+                <div class="floating-stat bg-white p-5 rounded-xl shadow-md border-r-4 border-emerald-600 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500">الشيتات المعالجة بالملف</p>
+                        <h3 id="stat-processed-sheets" dir="ltr" class="text-2xl font-extrabold text-gray-800 mt-1 text-right font-mono">0</h3>
+                    </div>
+                    <div class="p-3 bg-emerald-50 text-emerald-700 rounded-xl text-xl"><i class="fa-solid fa-layer-group"></i></div>
+                </div>
+                <div class="floating-stat bg-white p-5 rounded-xl shadow-md border-r-4 border-amber-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500">إجمالي كميات الوجبات</p>
+                        <h3 id="stat-total-qty" dir="ltr" class="text-2xl font-extrabold text-gray-800 mt-1 text-right font-mono">0</h3>
+                    </div>
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl text-xl"><i class="fa-solid fa-burger"></i></div>
+                </div>
+                <div class="floating-stat bg-white p-5 rounded-xl shadow-md border-r-4 border-indigo-600 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500">مديري التشغيل</p>
+                        <h3 class="text-base font-bold text-gray-800 mt-1">هاني عبدالله / طارق بيومي</h3>
+                    </div>
+                    <div class="p-3 bg-indigo-50 text-indigo-700 rounded-xl text-xl"><i class="fa-solid fa-user-tie"></i></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold petrol-text mb-4 flex items-center gap-2"><i class="fa-solid fa-bolt"></i> آلية عمل البرنامج للملفات الكبيرة (حتى 31 شيت × 3000 سطر)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 leading-relaxed">
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <span class="font-bold petrol-text block mb-1">1. قراءة ديناميكية ذكية لكل شيت:</span>
+                        يتعرف البرنامج تلقائياً على أسماء المطاعم (<code dir="ltr">Site - ...</code>) وصفوف الساعات (<code dir="ltr">Meal Name | 0..23</code>) داخل كل شيت أياً كان اسمه أو موضع الأعمدة فيه، ويتجاهل شيت <code dir="ltr">Total</code> تلقائياً منعاً للتكرار.
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <span class="font-bold petrol-text block mb-1">2. معالجة فائقة السرعة بدون أخطاء:</span>
+                        تم تحسين المحرك ليقرأ أكثر من 90,000 سطر في ثوانٍ معدودة دون استهلاك ذاكرة المتصفح (<code dir="ltr">localStorage</code>) حتى لا يتوقف عند الملفات الضخمة.
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <span class="font-bold petrol-text block mb-1">3. تقارير وتصدير احترافي:</span>
+                        استخراج المجاميع لكل مطعم أو حسب المشرف أو مدير التشغيل وتصديرها إلى Excel بمعادلات حية (<code dir="ltr">=SUM</code>) وتنسيق ملون، أو PDF متعدد الصفحات.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: UPLOAD & PROCESS -->
+        <section id="tab-upload" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+                <h3 class="text-lg font-bold petrol-text mb-2">رفع ملف مبيعات الوجبات حسب الساعة (Excel)</h3>
+                <p class="text-sm text-gray-500 mb-6">يدعم الملفات الكبيرة حتى 31 شيت وأكثر من 3000 سطر في كل شيت (<code dir="ltr">.xlsx</code> أو <code dir="ltr">.xlsm</code>)</p>
+                
+                <div id="drop-zone" class="max-w-xl mx-auto border-2 border-dashed petrol-border rounded-xl p-8 bg-cyan-50/40 hover:bg-cyan-50 transition cursor-pointer" onclick="document.getElementById('excel-file-input').click()">
+                    <i class="fa-solid fa-cloud-arrow-up text-4xl petrol-text mb-3"></i>
+                    <p class="text-gray-700 font-bold">اضغط لاختيار ملف الإكسل أو اسحب الملف وأفلته هنا</p>
+                    <p class="text-xs text-gray-500 mt-1" dir="ltr">Supported formats: .xlsx, .xlsm</p>
+                    <input type="file" id="excel-file-input" accept=".xlsx,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12" class="hidden" onchange="handleExcelUpload(event)">
+                </div>
+
+                <!-- Progress Indicator -->
+                <div id="upload-progress-wrap" class="max-w-xl mx-auto mt-5 hidden">
+                    <div class="flex justify-between text-xs font-bold petrol-text mb-1">
+                        <span id="upload-progress-label">جاري قراءة الشيتات وتجميع البيانات...</span>
+                        <span id="upload-progress-pct" dir="ltr">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                        <div id="upload-progress-bar" class="petrol-bg h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div id="upload-status" class="mt-4 text-sm font-bold"></div>
+            </div>
+
+            <div id="upload-summary-card" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-3 border-b">
+                    <h4 class="font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-600"></i> ملخص البيانات التي تم تجميعها بنجاح</h4>
+                    <button onclick="switchTab('reports')" class="petrol-bg hover:bg-[#045272] text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition">الانتقال لعرض التقارير <i class="fa-solid fa-arrow-left mr-1"></i></button>
+                </div>
+                <div id="upload-results-info" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm"></div>
+            </div>
+        </section>
+
+        <!-- TAB 3: REPORTS & EXPORT -->
+        <section id="tab-reports" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold petrol-text mb-4 flex items-center gap-2"><i class="fa-solid fa-filter"></i> خيارات الفلترة واستخراج التقارير</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">نطاق التقرير</label>
+                        <select id="report-scope" onchange="onReportScopeChange()" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50 text-sm focus:ring-2 focus:ring-[#05668D] outline-none">
+                            <option value="all">مجاميع كل مطعم على حدة (كما في شيت Total)</option>
+                            <option value="grand_total">الإجمالي العام الموحد لكل المطاعم</option>
+                            <option value="restaurant">مطعم محدد</option>
+                            <option value="supervisor">مجموعة مطاعم حسب المشرف</option>
+                            <option value="manager">مجموعة مطاعم حسب مدير التشغيل</option>
+                        </select>
+                    </div>
+
+                    <!-- Filter Value with Instant Interactive Live Search Dropdown -->
+                    <div class="relative md:col-span-2" id="filter-value-container">
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">بحث فوري (اكتب أول حرف للظهور السريع)</label>
+                        <div class="relative">
+                            <input type="text" id="live-search-input" autocomplete="off" disabled placeholder="اختر نطاق التقرير أولاً أو اعرض الكل..." oninput="filterDropdownOptions()" onfocus="filterDropdownOptions()" class="w-full border border-gray-300 rounded-lg p-2.5 pl-9 bg-gray-100 text-sm focus:ring-2 focus:ring-[#05668D] outline-none">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        <div id="live-search-dropdown" class="absolute z-50 w-full bg-white border border-cyan-200 rounded-xl shadow-xl mt-1 max-h-60 overflow-y-auto hidden divide-y divide-gray-100"></div>
+                    </div>
+
+                    <div class="flex items-end">
+                        <button onclick="generateReport()" class="w-full petrol-bg hover:bg-[#045272] text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-table"></i> استخراج التقرير</button>
+                    </div>
+                </div>
+
+                <!-- Optional Meal Filter -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5 pt-3 border-t border-gray-100">
+                    <div class="relative md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-600 mb-1">تصفية اختيارية باسم الوجبة / الصنف (اختياري)</label>
+                        <input type="text" id="meal-search-input" autocomplete="off" placeholder="اكتب أول حرف من اسم الوجبة للتصفية أو اتركه فارغاً لعرض كل الأصناف..." oninput="filterMealDropdown()" onfocus="filterMealDropdown()" class="w-full border border-gray-300 rounded-lg p-2 bg-white text-sm focus:ring-2 focus:ring-[#05668D] outline-none">
+                        <div id="meal-search-dropdown" class="absolute z-50 w-full bg-white border border-cyan-200 rounded-xl shadow-xl mt-1 max-h-52 overflow-y-auto hidden divide-y divide-gray-100"></div>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="clearFilters()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg transition text-xs"><i class="fa-solid fa-rotate-right ml-1"></i> إعادة ضبط الفلاتر</button>
+                    </div>
+                </div>
+
+                <!-- Export Action Buttons -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-gray-200">
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="exportToExcelStyled()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-bold shadow-sm transition flex items-center gap-2 text-sm"><i class="fa-solid fa-file-excel"></i> تصدير Excel منسق بالمعادلات</button>
+                        <button onclick="exportToPDFReport()" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-lg font-bold shadow-sm transition flex items-center gap-2 text-sm"><i class="fa-solid fa-file-pdf"></i> تصدير PDF منسق بالشعار</button>
+                    </div>
+                    <span id="export-status-msg" class="text-xs font-bold petrol-text"></span>
+                </div>
+            </div>
+
+            <!-- Report Output Area -->
+            <div id="report-print-container" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+                <div class="flex flex-col items-center text-center mb-6 pb-4 border-b-2 petrol-border">
+                    <img src="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg" alt="Naif Logo" class="h-14 mb-2 rounded">
+                    <h2 class="text-xl font-extrabold petrol-text">شركة نايف للأغذية</h2>
+                    <h3 id="report-title-heading" class="text-base font-bold text-gray-800 mt-1">تقرير تجميع مبيعات الوجبات حسب الساعة (0 - 23)</h3>
+                    <p id="report-subtitle" class="text-xs text-gray-500 mt-1 font-semibold"></p>
+                </div>
+                <div id="report-table-wrapper">
+                    <div class="text-center text-gray-400 py-12">
+                        <i class="fa-solid fa-file-invoice text-4xl mb-3 text-gray-300"></i>
+                        <p>قم برفع ملف الإكسل أولاً ثم اختر نوع التقرير واضغط على "استخراج التقرير".</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: SETTINGS & CRUD -->
+        <section id="tab-settings" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h3 class="text-lg font-bold petrol-text">إدارة المطاعم والمشرفين ومديري التشغيل</h3>
+                    <p class="text-sm text-gray-500">صلاحيات كاملة لإضافة مطعم جديد، تعديل اسم المشرف أو مدير التشغيل (هاني عبدالله / طارق بيومي)، أو الحذف</p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <div class="relative flex-grow md:w-64">
+                        <input type="text" id="settings-search-input" autocomplete="off" placeholder="بحث سريع عن مطعم أو مشرف..." oninput="renderRestaurantsTable()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#05668D] outline-none">
+                    </div>
+                    <button onclick="openRestaurantModal()" class="petrol-bg hover:bg-[#045272] text-white px-4 py-2.5 rounded-lg font-bold shadow transition flex items-center gap-2 text-sm whitespace-nowrap"><i class="fa-solid fa-plus"></i> إضافة مطعم جديد</button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+                <table class="table-grid text-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>اسم المطعم (Site Name)</th>
+                            <th>المشرف (Supervisor)</th>
+                            <th>مدير التشغيل (Operation Manager)</th>
+                            <th>التحكم والصلاحيات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="restaurants-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Add/Edit Restaurant -->
+    <div id="restaurant-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl border border-gray-100">
+            <h3 id="modal-title" class="text-lg font-bold petrol-text mb-4 pb-2 border-b">إضافة مطعم جديد</h3>
+            <input type="hidden" id="edit-restaurant-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">اسم المطعم (كما يظهر في الإكسل: Site - ...)</label>
+                    <input type="text" id="modal-site-name" dir="ltr" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#05668D] outline-none" placeholder="Site - 360 Mall">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">اسم المشرف</label>
+                    <input type="text" id="modal-supervisor" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#05668D] outline-none" placeholder="مثال: وليد صبري">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">مدير التشغيل</label>
+                    <select id="modal-manager" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-[#05668D] outline-none">
+                        <option value="هاني عبدالله">هاني عبدالله</option>
+                        <option value="طارق بيومي">طارق بيومي</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="closeRestaurantModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm">إلغاء</button>
+                <button onclick="saveRestaurant()" class="petrol-bg hover:bg-[#045272] text-white px-5 py-2 rounded-lg font-bold text-sm shadow">حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Developer Signature Card -->
+    <a href="https://yasser-q8.github.io/myprofile/#" class="signature-card" target="_blank" rel="noopener noreferrer">
+        <div class="name">Yasser Elkhateeb</div>
+        <div class="title">مطور البرنامج 67011143</div>
+    </a>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-500 mt-8">
+        <p>جميع الحقوق محفوظة © <span dir="ltr">2026</span> شركة نايف للأغذية — نظام تجميع مبيعات الوجبات حسب الساعة</p>
+    </footer>
+
+    <script>
+        // Complete Master List of Restaurants from OCIMS Product Mix file
+        const defaultRestaurants = [
+            { id: 1, site: "Site - 360 Mall", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 2, site: "Site - Abu Fatira Co-Op", supervisor: "عماد عبدالحميد", manager: "هاني عبدالله" },
+            { id: 3, site: "Site - Abu Halifa", supervisor: "محمد حجازي", manager: "هاني عبدالله" },
+            { id: 4, site: "Site - Ahmadi Ind", supervisor: "محمد حجازي", manager: "هاني عبدالله" },
+            { id: 5, site: "Site - Airport", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 6, site: "Site - Al Rai", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 7, site: "Site - AlKout", supervisor: "عماد عبدالحميد", manager: "هاني عبدالله" },
+            { id: 8, site: "Site - Avenues", supervisor: "محمد مرتضى", manager: "طارق بيومي" },
+            { id: 9, site: "Site - Dabaya", supervisor: "عماد عبدالحميد", manager: "هاني عبدالله" },
+            { id: 10, site: "Site - Dasma", supervisor: "محمد انور", manager: "هاني عبدالله" },
+            { id: 11, site: "Site - Fahaheel", supervisor: "عماد عبدالحميد", manager: "هاني عبدالله" },
+            { id: 12, site: "Site - Faiha", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 13, site: "Site - Farwaniya", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 14, site: "Site - Fintas", supervisor: "محمد انور", manager: "هاني عبدالله" },
+            { id: 15, site: "Site - Hadiya", supervisor: "محمد حجازي", manager: "هاني عبدالله" },
+            { id: 16, site: "Site - Hawally Park", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 17, site: "Site - Jaber Al-Ahmed", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 18, site: "Site - Jabriya 1 - Jabriya Tikka", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 19, site: "Site - Jabriya 2 - Jabriya BD", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 20, site: "Site - Jahra 2 - Jahra Ind", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 21, site: "Site - Jahra Layaly Elsharq", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 22, site: "Site - Jahra Makkah", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 23, site: "Site - Jahra1-Duwaik", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 24, site: "Site - Jleeb Al-Shiyoukh", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 25, site: "Site - Kabed", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 26, site: "Site - Khairan Oia", supervisor: "عماد عبدالحميد", manager: "هاني عبدالله" },
+            { id: 27, site: "Site - Khairan Outlet Mall", supervisor: "عماد عبدالحميد", manager: "هاني عبدالله" },
+            { id: 28, site: "Site - Khaitan Airport Road", supervisor: "محمد مرتضى", manager: "طارق بيومي" },
+            { id: 29, site: "Site - Khaitan New", supervisor: "محمد مرتضى", manager: "طارق بيومي" },
+            { id: 30, site: "Site - Khioul", supervisor: "محمد حجازي", manager: "هاني عبدالله" },
+            { id: 31, site: "Site - Mangaf", supervisor: "عماد عبدالحميد", manager: "هاني عبدالله" },
+            { id: 32, site: "Site - Marina Mall", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 33, site: "Site - Mishref", supervisor: "محمد انور", manager: "هاني عبدالله" },
+            { id: 34, site: "Site - New Ardiya", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 35, site: "Site - New Farwaniya", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 36, site: "Site - Qadsiya", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 37, site: "Site - Qairawan", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 38, site: "Site - Qurain", supervisor: "محمد مرتضى", manager: "طارق بيومي" },
+            { id: 39, site: "Site - Reggai", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 40, site: "Site - Riqqa", supervisor: "محمد حجازي", manager: "هاني عبدالله" },
+            { id: 41, site: "Site - Saad Al Abdullah", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 42, site: "Site - Sabah al Ahmed", supervisor: "محمد حجازي", manager: "هاني عبدالله" },
+            { id: 43, site: "Site - Sabah Salem", supervisor: "محمد انور", manager: "هاني عبدالله" },
+            { id: 44, site: "Site - Sabah-Salem Alareen", supervisor: "محمد انور", manager: "هاني عبدالله" },
+            { id: 45, site: "Site - Salmiya 1 - Nafura", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 46, site: "Site - Salmiya 2 - Sindhibad", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 47, site: "Site - Salmiya 3 - Bahrain Street", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 48, site: "Site - Salmiya 4 - Sayed Yasin", supervisor: "طارق حمدي", manager: "هاني عبدالله" },
+            { id: 49, site: "Site - Salwa", supervisor: "محمد انور", manager: "هاني عبدالله" },
+            { id: 50, site: "Site - Sharq", supervisor: "محمد انور", manager: "هاني عبدالله" },
+            { id: 51, site: "Site - Shuhada", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 52, site: "Site - Shuwaikh", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 53, site: "Site - Souq Qurain", supervisor: "محمد مرتضى", manager: "طارق بيومي" },
+            { id: 54, site: "Site - Sulaibiya CO-OP", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 55, site: "Site - Sulebhikat", supervisor: "ثروت المرجاوي", manager: "طارق بيومي" },
+            { id: 56, site: "Site - Suleibiya", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 57, site: "Site - Wafra", supervisor: "محمد حجازي", manager: "هاني عبدالله" },
+            { id: 58, site: "Site - West Abu Fatira", supervisor: "محمد مرتضى", manager: "طارق بيومي" },
+            { id: 59, site: "Site - Zahra", supervisor: "وليد صبري", manager: "طارق بيومي" },
+            { id: 60, site: "Site - Alnasser club", supervisor: "مختار محمود", manager: "طارق بيومي" },
+            { id: 61, site: "Site - Aventoura", supervisor: "وليد صبري", manager: "طارق بيومي" }
+        ];
+
+        let restaurants = JSON.parse(localStorage.getItem('naif_restaurants_v2')) || defaultRestaurants;
+        
+        // Store large parsed workbook data in memory (avoids localStorage 5MB QuotaExceededError!)
+        let workbookStore = {
+            fileName: '',
+            sheetsCount: 0,
+            totalRowsProcessed: 0,
+            // siteData[siteName][mealName] = Array(24)
+            siteData: {},
+            allMealsSet: new Set()
+        };
+
+        let lastRenderedReport = null; // Stores current report sections for export
+
+        // English Date/Time Header
+        function updateDateTime() {
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            const formatted = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+            document.getElementById('current-date-time').innerText = formatted;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('petrol-dark', 'shadow-inner');
+                btn.classList.add('hover:bg-[#045272]');
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('petrol-dark', 'shadow-inner');
+            activeBtn.classList.remove('hover:bg-[#045272]');
+
+            if (tabId === 'settings') renderRestaurantsTable();
+            if (tabId === 'dashboard') updateDashboardStats();
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('stat-total-restaurants').innerText = restaurants.length.toLocaleString('en-US');
+            document.getElementById('stat-processed-sheets').innerText = workbookStore.sheetsCount.toLocaleString('en-US');
+            
+            let totalQty = 0;
+            Object.values(workbookStore.siteData).forEach(mealsObj => {
+                Object.values(mealsObj).forEach(hoursArr => {
+                    for (let h = 0; h < 24; h++) totalQty += hoursArr[h];
+                });
+            });
+            document.getElementById('stat-total-qty').innerText = totalQty.toLocaleString('en-US');
+        }
+        updateDashboardStats();
+
+        // Drag & Drop Support
+        const dropZone = document.getElementById('drop-zone');
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('bg-cyan-100'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-cyan-100'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-cyan-100');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleExcelFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (file) handleExcelFile(file);
+            event.target.value = ''; // Allow re-uploading same file if modified
+        }
+
+        // High-Performance Chunked Excel Parser for 31+ Sheets & 3000+ Rows/Sheet
+        async function handleExcelFile(file) {
+            const statusEl = document.getElementById('upload-status');
+            const progressWrap = document.getElementById('upload-progress-wrap');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progressPct = document.getElementById('upload-progress-pct');
+            const progressLabel = document.getElementById('upload-progress-label');
+
+            statusEl.innerHTML = '';
+            progressWrap.classList.remove('hidden');
+            progressBar.style.width = '5%';
+            progressPct.innerText = '5%';
+            progressLabel.innerText = 'جاري قراءة بنية ملف الإكسل...';
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                // Yield to UI thread so progress bar updates smoothly
+                await new Promise(r => setTimeout(r, 30));
+
+                const workbook = XLSX.read(arrayBuffer, { type: 'array', dense: true });
+                
+                // Reset in-memory store
+                const newSiteData = {};
+                const newMealsSet = new Set();
+                let dataSheetsCount = 0;
+                let totalRows = 0;
+
+                // Exclude any sheet named "Total" (case-insensitive) so we don't double-count summary tabs
+                const validSheetNames = workbook.SheetNames.filter(name => name.trim().toLowerCase() !== 'total');
+                const totalSheets = validSheetNames.length;
+
+                if (totalSheets === 0) {
+                    throw new Error('لم يتم العثور على شيتات بيانات صالحة داخل الملف.');
+                }
+
+                for (let sIdx = 0; sIdx < totalSheets; sIdx++) {
+                    const sheetName = validSheetNames[sIdx];
+                    const sheet = workbook.Sheets[sheetName];
+                    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null });
+
+                    let currentSite = null;
+                    // hourColMap maps column index -> hour (0..23) for the active restaurant block
+                    let hourColMap = {};
+
+                    for (let r = 0; r < rows.length; r++) {
+                        totalRows++;
+                        const row = rows[r];
+                        if (!row || row.length === 0) continue;
+
+                        // Find first non-empty string cell in the row (usually col 0)
+                        let firstCell = null;
+                        for (let c = 0; c < Math.min(row.length, 5); c++) {
+                            if (row[c] !== null && row[c] !== undefined && String(row[c]).trim() !== '') {
+                                firstCell = String(row[c]).trim();
+                                break;
+                            }
+                        }
+                        if (!firstCell) continue;
+
+                        // 1. Detect Restaurant Header: e.g. "Site - 360 Mall"
+                        if (/^Site\s*-/i.test(firstCell)) {
+                            currentSite = firstCell.replace(/\s+/g, ' ').trim();
+                            if (!newSiteData[currentSite]) newSiteData[currentSite] = {};
+                            hourColMap = {}; // Reset hour mapping until next "Meal Name" header row
+                            continue;
+                        }
+
+                        // 2. Detect Hour Header Row: starts with "Meal Name" and contains hour numbers (0..23) in columns
+                        if (/^Meal\s*Name$/i.test(firstCell)) {
+                            hourColMap = {};
+                            for (let c = 1; c < row.length; c++) {
+                                const val = row[c];
+                                if (val === null || val === undefined || val === '') continue;
+                                const strVal = String(val).trim();
+                                if (/^Total$/i.test(strVal)) break; // Stop before Total column
+                                const num = Number(strVal);
+                                if (!isNaN(num) && Number.isInteger(num) && num >= 0 && num <= 23) {
+                                    hourColMap[c] = num;
+                                }
+                            }
+                            continue;
+                        }
+
+                        // 3. Skip Report Metadata / Group / Subgroup / Page Footer rows
+                        if (
+                            /^Kuwait\s*-/i.test(firstCell) ||
+                            /^Product\s*Sales/i.test(firstCell) ||
+                            /^Group\s*-/i.test(firstCell) ||
+                            /^Subgroup\s*-/i.test(firstCell) ||
+                            /^From\s+\d/i.test(firstCell) ||
+                            /^\d{1,2}\/\d{1,2}\/\d{4}/.test(firstCell) ||
+                            /^Total$/i.test(firstCell) ||
+                            /^Sub\s*Total/i.test(firstCell) ||
+                            /^Grand\s*Total/i.test(firstCell)
+                        ) {
+                            continue;
+                        }
+
+                        // 4. Meal Sales Data Row (requires an active site and valid hour columns)
+                        if (currentSite && Object.keys(hourColMap).length > 0) {
+                            const mealName = firstCell;
+                            newMealsSet.add(mealName);
+                            if (!newSiteData[currentSite][mealName]) {
+                                newSiteData[currentSite][mealName] = new Float64Array(24);
+                            }
+                            const mealHours = newSiteData[currentSite][mealName];
+                            for (const [colIdxStr, hourNum] of Object.entries(hourColMap)) {
+                                const rawQty = row[Number(colIdxStr)];
+                                if (rawQty !== null && rawQty !== undefined && rawQty !== '') {
+                                    const qty = Number(rawQty);
+                                    if (!isNaN(qty)) {
+                                        mealHours[hourNum] += qty;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    dataSheetsCount++;
+                    const pct = Math.min(100, Math.round(((sIdx + 1) / totalSheets) * 100));
+                    progressBar.style.width = pct + '%';
+                    progressPct.innerText = pct + '%';
+                    progressLabel.innerText = `تمت معالجة الشيت (${sIdx + 1} من ${totalSheets}): ${sheetName}`;
+                    
+                    // Yield briefly every 3 sheets to keep UI responsive on 31-sheet workbooks
+                    if (sIdx % 3 === 0) await new Promise(r => setTimeout(r, 10));
+                }
+
+                workbookStore = {
+                    fileName: file.name,
+                    sheetsCount: dataSheetsCount,
+                    totalRowsProcessed: totalRows,
+                    siteData: newSiteData,
+                    allMealsSet: newMealsSet
+                };
+
+                const sitesFoundCount = Object.keys(newSiteData).length;
+                statusEl.innerHTML = `<span class="text-emerald-700"><i class="fa-solid fa-circle-check ml-1"></i> تم تجميع البيانات بنجاح من <span dir="ltr">${dataSheetsCount}</span> شيت!</span>`;
+                
+                const summaryCard = document.getElementById('upload-summary-card');
+                summaryCard.classList.remove('hidden');
+                document.getElementById('upload-results-info').innerHTML = `
+                    <div class="p-3 bg-slate-50 rounded-lg border"><span class="text-gray-500 block text-xs">اسم الملف</span><strong dir="ltr" class="text-gray-800 break-all">${file.name}</strong></div>
+                    <div class="p-3 bg-slate-50 rounded-lg border"><span class="text-gray-500 block text-xs">الشيتات المجمعة</span><strong dir="ltr" class="petrol-text text-lg">${dataSheetsCount}</strong></div>
+                    <div class="p-3 bg-slate-50 rounded-lg border"><span class="text-gray-500 block text-xs">المطاعم المكتشفة</span><strong dir="ltr" class="petrol-text text-lg">${sitesFoundCount}</strong></div>
+                    <div class="p-3 bg-slate-50 rounded-lg border"><span class="text-gray-500 block text-xs">الأصناف / الوجبات</span><strong dir="ltr" class="petrol-text text-lg">${newMealsSet.size}</strong></div>
+                `;
+
+                updateDashboardStats();
+                // Automatically generate default report so user sees results immediately
+                generateReport();
+
+            } catch (err) {
+                console.error('Excel Parsing Error:', err);
+                statusEl.innerHTML = `<span class="text-red-600"><i class="fa-solid fa-triangle-exclamation ml-1"></i> خطأ في معالجة الملف: ${err.message || 'تأكد من أن الملف غير محمي بكلمة مرور.'}</span>`;
+            }
+        }
+
+        // Report Scope & Live Interactive Search Dropdowns
+        function onReportScopeChange() {
+            const scope = document.getElementById('report-scope').value;
+            const input = document.getElementById('live-search-input');
+            const dropdown = document.getElementById('live-search-dropdown');
+            input.value = '';
+            dropdown.classList.add('hidden');
+
+            if (scope === 'all' || scope === 'grand_total') {
+                input.disabled = true;
+                input.classList.add('bg-gray-100');
+                input.classList.remove('bg-white');
+                input.placeholder = scope === 'all' ? 'سيتم عرض جدول مستقل لكل مطعم...' : 'سيتم تجميع كافة المطاعم في جدول واحد...';
+            } else {
+                input.disabled = false;
+                input.classList.remove('bg-gray-100');
+                input.classList.add('bg-white');
+                if (scope === 'restaurant') input.placeholder = 'اكتب أول حرف من اسم المطعم...';
+                if (scope === 'supervisor') input.placeholder = 'اكتب أول حرف من اسم المشرف...';
+                if (scope === 'manager') input.placeholder = 'اختر أو اكتب: هاني عبدالله أو طارق بيومي...';
+                filterDropdownOptions();
+            }
+        }
+
+        function filterDropdownOptions() {
+            const scope = document.getElementById('report-scope').value;
+            const input = document.getElementById('live-search-input');
+            const dropdown = document.getElementById('live-search-dropdown');
+            if (scope === 'all' || scope === 'grand_total') {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            const q = input.value.trim().toLowerCase();
+            let items = [];
+
+            if (scope === 'restaurant') {
+                // Combine configured restaurants + any newly detected sites in Excel
+                const siteSet = new Set(restaurants.map(r => r.site));
+                Object.keys(workbookStore.siteData).forEach(s => siteSet.add(s));
+                items = Array.from(siteSet).sort();
+            } else if (scope === 'supervisor') {
+                items = [...new Set(restaurants.map(r => r.supervisor))].filter(Boolean).sort();
+            } else if (scope === 'manager') {
+                items = ["هاني عبدالله", "طارق بيومي"];
+            }
+
+            const matches = q ? items.filter(item => item.toLowerCase().includes(q)) : items;
+            if (matches.length === 0) {
+                dropdown.innerHTML = `<div class="px-4 py-2.5 text-xs text-gray-400">لا توجد نتائج مطابقة</div>`;
+            } else {
+                dropdown.innerHTML = matches.map(m => `
+                    <div class="px-4 py-2.5 hover:bg-cyan-50 cursor-pointer text-sm flex items-center justify-between transition" onclick="selectLiveOption('${m.replace(/'/g, "\'")}')">
+                        <span class="font-medium text-gray-800">${m}</span>
+                        <i class="fa-solid fa-chevron-left text-xs text-cyan-600"></i>
+                    </div>
+                `).join('');
+            }
+            dropdown.classList.remove('hidden');
+        }
+
+        function selectLiveOption(val) {
+            document.getElementById('live-search-input').value = val;
+            document.getElementById('live-search-dropdown').classList.add('hidden');
+        }
+
+        // Meal Live Search Dropdown
+        function filterMealDropdown() {
+            const input = document.getElementById('meal-search-input');
+            const dropdown = document.getElementById('meal-search-dropdown');
+            const q = input.value.trim().toLowerCase();
+            const allMeals = Array.from(workbookStore.allMealsSet).sort();
+
+            if (allMeals.length === 0 || !q) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            const matches = allMeals.filter(m => m.toLowerCase().includes(q)).slice(0, 40);
+            if (matches.length === 0) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            dropdown.innerHTML = matches.map(m => `
+                <div class="px-4 py-2 hover:bg-cyan-50 cursor-pointer text-xs font-mono text-gray-800 text-left" dir="ltr" onclick="selectMealOption('${m.replace(/'/g, "\'")}')">${m}</div>
+            `).join('');
+            dropdown.classList.remove('hidden');
+        }
+
+        function selectMealOption(val) {
+            document.getElementById('meal-search-input').value = val;
+            document.getElementById('meal-search-dropdown').classList.add('hidden');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#filter-value-container')) {
+                document.getElementById('live-search-dropdown').classList.add('hidden');
+            }
+            if (!e.target.closest('#meal-search-input') && !e.target.closest('#meal-search-dropdown')) {
+                document.getElementById('meal-search-dropdown').classList.add('hidden');
+            }
+        });
+
+        function clearFilters() {
+            document.getElementById('report-scope').value = 'all';
+            document.getElementById('meal-search-input').value = '';
+            onReportScopeChange();
+            if (workbookStore.sheetsCount > 0) generateReport();
+        }
+
+        // Helper to match restaurant metadata (handles minor spacing differences)
+        function getRestaurantMeta(siteName) {
+            const norm = siteName.toLowerCase().replace(/\s+/g, ' ').trim();
+            return restaurants.find(r => r.site.toLowerCase().replace(/\s+/g, ' ').trim() === norm) || {
+                site: siteName,
+                supervisor: 'غير محدد',
+                manager: 'غير محدد'
+            };
+        }
+
+        // Build and Render Report
+        function generateReport() {
+            if (workbookStore.sheetsCount === 0) {
+                alert('الرجاء رفع ملف الإكسل أولاً من تبويب "تحميل ومعالجة الملفات".');
+                return;
+            }
+
+            const scope = document.getElementById('report-scope').value;
+            const filterVal = document.getElementById('live-search-input').value.trim();
+            const mealFilter = document.getElementById('meal-search-input').value.trim().toLowerCase();
+            const wrapper = document.getElementById('report-table-wrapper');
+            const titleEl = document.getElementById('report-title-heading');
+            const subEl = document.getElementById('report-subtitle');
+
+            const allAvailableSites = Object.keys(workbookStore.siteData).sort();
+            let sections = []; // Array of { title, subtitle, mealsMap: { mealName: Array(24) } }
+
+            if (scope === 'all') {
+                titleEl.innerText = 'تقرير تجميع مبيعات الوجبات حسب الساعة (لكل مطعم على حدة)';
+                subEl.innerText = `عدد الشيتات المجمعة: ${workbookStore.sheetsCount} | عدد المطاعم: ${allAvailableSites.length}`;
+                allAvailableSites.forEach(site => {
+                    const meta = getRestaurantMeta(site);
+                    sections.push({
+                        title: site,
+                        subtitle: `المشرف: ${meta.supervisor} | مدير التشغيل: ${meta.manager}`,
+                        mealsMap: workbookStore.siteData[site]
+                    });
+                });
+            } else if (scope === 'grand_total') {
+                titleEl.innerText = 'التقرير الإجمالي الموحد لمبيعات الوجبات حسب الساعة (جميع المطاعم)';
+                subEl.innerText = `عدد الشيتات المجمعة: ${workbookStore.sheetsCount} | إجمالي المطاعم: ${allAvailableSites.length}`;
+                const merged = {};
+                allAvailableSites.forEach(site => {
+                    const mObj = workbookStore.siteData[site];
+                    Object.entries(mObj).forEach(([meal, hrs]) => {
+                        if (!merged[meal]) merged[meal] = new Float64Array(24);
+                        for (let h = 0; h < 24; h++) merged[meal][h] += hrs[h];
+                    });
+                });
+                sections.push({
+                    title: 'الإجمالي العام لجميع المطاعم',
+                    subtitle: `يشمل ${allAvailableSites.length} مطعم`,
+                    mealsMap: merged
+                });
+            } else if (scope === 'restaurant') {
+                if (!filterVal) { alert('الرجاء اختيار اسم المطعم من القائمة.'); return; }
+                const matchedSites = allAvailableSites.filter(s => s.toLowerCase().includes(filterVal.toLowerCase()));
+                titleEl.innerText = `تقرير مبيعات الوجبات حسب الساعة - ${filterVal}`;
+                subEl.innerText = `الشيتات المجمعة: ${workbookStore.sheetsCount}`;
+                matchedSites.forEach(site => {
+                    const meta = getRestaurantMeta(site);
+                    sections.push({
+                        title: site,
+                        subtitle: `المشرف: ${meta.supervisor} | مدير التشغيل: ${meta.manager}`,
+                        mealsMap: workbookStore.siteData[site]
+                    });
+                });
+            } else if (scope === 'supervisor') {
+                if (!filterVal) { alert('الرجاء اختيار اسم المشرف من القائمة.'); return; }
+                const supSites = restaurants.filter(r => r.supervisor.toLowerCase().includes(filterVal.toLowerCase())).map(r => r.site.toLowerCase());
+                const matchedSites = allAvailableSites.filter(s => supSites.includes(s.toLowerCase()));
+                
+                titleEl.innerText = `تقرير مبيعات الوجبات حسب المشرف: ${filterVal}`;
+                subEl.innerText = `عدد المطاعم التابعة للمشرف: ${matchedSites.length} | الشيتات المجمعة: ${workbookStore.sheetsCount}`;
+
+                // Add combined summary for supervisor + individual breakdown
+                const merged = {};
+                matchedSites.forEach(site => {
+                    const mObj = workbookStore.siteData[site];
+                    Object.entries(mObj).forEach(([meal, hrs]) => {
+                        if (!merged[meal]) merged[meal] = new Float64Array(24);
+                        for (let h = 0; h < 24; h++) merged[meal][h] += hrs[h];
+                    });
+                });
+                sections.push({
+                    title: `إجمالي مجموعة المشرف: ${filterVal}`,
+                    subtitle: `تجميع ${matchedSites.length} مطعم`,
+                    mealsMap: merged
+                });
+                matchedSites.forEach(site => {
+                    const meta = getRestaurantMeta(site);
+                    sections.push({
+                        title: site,
+                        subtitle: `المشرف: ${meta.supervisor} | مدير التشغيل: ${meta.manager}`,
+                        mealsMap: workbookStore.siteData[site]
+                    });
+                });
+            } else if (scope === 'manager') {
+                if (!filterVal) { alert('الرجاء اختيار مدير التشغيل (هاني عبدالله أو طارق بيومي).'); return; }
+                const mgrSites = restaurants.filter(r => r.manager.toLowerCase().includes(filterVal.toLowerCase())).map(r => r.site.toLowerCase());
+                const matchedSites = allAvailableSites.filter(s => mgrSites.includes(s.toLowerCase()));
+
+                titleEl.innerText = `تقرير مبيعات الوجبات حسب مدير التشغيل: ${filterVal}`;
+                subEl.innerText = `عدد المطاعم التابعة لمدير التشغيل: ${matchedSites.length} | الشيتات المجمعة: ${workbookStore.sheetsCount}`;
+
+                const merged = {};
+                matchedSites.forEach(site => {
+                    const mObj = workbookStore.siteData[site];
+                    Object.entries(mObj).forEach(([meal, hrs]) => {
+                        if (!merged[meal]) merged[meal] = new Float64Array(24);
+                        for (let h = 0; h < 24; h++) merged[meal][h] += hrs[h];
+                    });
+                });
+                sections.push({
+                    title: `إجمالي قطاع مدير التشغيل: ${filterVal}`,
+                    subtitle: `تجميع ${matchedSites.length} مطعم`,
+                    mealsMap: merged
+                });
+                matchedSites.forEach(site => {
+                    const meta = getRestaurantMeta(site);
+                    sections.push({
+                        title: site,
+                        subtitle: `المشرف: ${meta.supervisor} | مدير التشغيل: ${meta.manager}`,
+                        mealsMap: workbookStore.siteData[site]
+                    });
+                });
+            }
+
+            if (sections.length === 0) {
+                wrapper.innerHTML = `<p class="text-center text-amber-600 font-bold py-8">لا توجد بيانات مبيعات مطابقة للفلتر المحدد في الملف المرفوع.</p>`;
+                lastRenderedReport = null;
+                return;
+            }
+
+            // Apply optional meal filter & build HTML tables
+            let html = '';
+            let validSectionsForExport = [];
+
+            sections.forEach(sec => {
+                let mealNames = Object.keys(sec.mealsMap).sort();
+                if (mealFilter) {
+                    mealNames = mealNames.filter(m => m.toLowerCase().includes(mealFilter));
+                }
+                if (mealNames.length === 0) return;
+
+                const sectionRows = [];
+                const colTotals = new Float64Array(24);
+                let grandRowSum = 0;
+
+                mealNames.forEach(meal => {
+                    const hrs = sec.mealsMap[meal];
+                    let rowTotal = 0;
+                    for (let h = 0; h < 24; h++) {
+                        rowTotal += hrs[h];
+                        colTotals[h] += hrs[h];
+                    }
+                    grandRowSum += rowTotal;
+                    sectionRows.push({ meal, hrs: Array.from(hrs), rowTotal });
+                });
+
+                validSectionsForExport.push({
+                    title: sec.title,
+                    subtitle: sec.subtitle,
+                    rows: sectionRows,
+                    colTotals: Array.from(colTotals),
+                    grandRowSum
+                });
+
+                html += `
+                    <div class="mb-8 report-section-block">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-cyan-50 border-r-4 petrol-border px-4 py-2.5 rounded-t-lg mb-1">
+                            <span class="font-extrabold petrol-text text-sm" dir="ltr">${sec.title}</span>
+                            <span class="text-xs text-gray-600 font-semibold">${sec.subtitle}</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="table-grid text-xs" dir="ltr">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="text-align:left; min-width:210px;">Meal Name</th>
+                                        ${Array.from({length: 24}, (_, h) => `<th>${h}</th>`).join('')}
+                                        <th style="background-color:#034966;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${sectionRows.map((r, i) => `
+                                        <tr>
+                                            <td class="font-mono text-gray-500">${i + 1}</td>
+                                            <td style="text-align:left;" class="font-semibold text-gray-800">${r.meal}</td>
+                                            ${r.hrs.map(v => `<td class="font-mono">${v !== 0 ? v : ''}</td>`).join('')}
+                                            <td class="font-mono font-bold bg-cyan-50 petrol-text">${r.rowTotal}</td>
+                                        </tr>
+                                    `).join('')}
+                                    <tr style="background-color:#05668D; color:white; font-weight:bold;">
+                                        <td colspan="2" style="text-align:right;">Total (${sec.title})</td>
+                                        ${Array.from(colTotals).map(v => `<td class="font-mono">${v !== 0 ? v : 0}</td>`).join('')}
+                                        <td class="font-mono" style="background-color:#034966;">${grandRowSum}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (validSectionsForExport.length === 0) {
+                wrapper.innerHTML = `<p class="text-center text-amber-600 font-bold py-8">لم يتم العثور على وجبات مطابقة لاسم الصنف المحدد.</p>`;
+                lastRenderedReport = null;
+                return;
+            }
+
+            wrapper.innerHTML = html;
+            lastRenderedReport = {
+                mainTitle: titleEl.innerText,
+                subTitle: subEl.innerText,
+                sections: validSectionsForExport
+            };
+        }
+
+        // Export Styled Excel (.xlsx) using ExcelJS with Borders, Light Blue Zebra Rows, Header Fill, and Live SUM Formulas
+        async function exportToExcelStyled() {
+            if (!lastRenderedReport || !lastRenderedReport.sections.length) {
+                alert('الرجاء استخراج التقرير أولاً قبل التصدير إلى Excel.');
+                return;
+            }
+
+            const statusMsg = document.getElementById('export-status-msg');
+            statusMsg.innerText = 'جاري تجهيز ملف Excel المنسق...';
+
+            try {
+                const workbook = new ExcelJS.Workbook();
+                workbook.creator = 'شركة نايف للأغذية';
+                workbook.created = new Date();
+
+                const ws = workbook.addWorksheet('تجميع المبيعات حسب الساعة', {
+                    views: [{ state: 'frozen', ySplit: 4 }]
+                });
+
+                // Company & Report Title Banner
+                ws.mergeCells('A1:AA1');
+                const titleCell = ws.getCell('A1');
+                titleCell.value = 'شركة نايف للأغذية - ' + lastRenderedReport.mainTitle;
+                titleCell.font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+                titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF05668D' } };
+                titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+                ws.getRow(1).height = 28;
+
+                ws.mergeCells('A2:AA2');
+                const subCell = ws.getCell('A2');
+                subCell.value = lastRenderedReport.subTitle;
+                subCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF05668D' } };
+                subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F4FA' } };
+                subCell.alignment = { horizontal: 'center', vertical: 'middle' };
+                ws.getRow(2).height = 20;
+
+                let currentRow = 4;
+
+                const thinBorder = {
+                    top: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+                    left: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+                    bottom: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+                    right: { style: 'thin', color: { argb: 'FFCBD5E1' } }
+                };
+
+                lastRenderedReport.sections.forEach(sec => {
+                    // Section Header (Restaurant / Supervisor / Manager)
+                    ws.mergeCells(`A${currentRow}:AA${currentRow}`);
+                    const secCell = ws.getCell(`A${currentRow}`);
+                    secCell.value = `${sec.title}  |  ${sec.subtitle}`;
+                    secCell.font = { name: 'Segoe UI', size: 11, bold: true, color: { argb: 'FF034966' } };
+                    secCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD0EBF7' } };
+                    secCell.alignment = { horizontal: 'left', vertical: 'middle' };
+                    ws.getRow(currentRow).height = 22;
+                    currentRow++;
+
+                    // Table Columns Header: #, Meal Name, 0..23, Total
+                    const headerValues = ['#', 'Meal Name', ...Array.from({length: 24}, (_, h) => h), 'Total'];
+                    const headerRow = ws.getRow(currentRow);
+                    headerRow.values = headerValues;
+                    headerRow.height = 22;
+                    headerRow.eachCell((cell, colNumber) => {
+                        cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colNumber === 27 ? 'FF034966' : 'FF05668D' } };
+                        cell.alignment = { horizontal: colNumber === 2 ? 'left' : 'center', vertical: 'middle' };
+                        cell.border = thinBorder;
+                    });
+                    currentRow++;
+
+                    const startDataRow = currentRow;
+
+                    // Meal Data Rows (Alternating light blue row and white row)
+                    sec.rows.forEach((r, idx) => {
+                        const row = ws.getRow(currentRow);
+                        const rowVals = [idx + 1, r.meal, ...r.hrs.map(v => v === 0 ? null : v), { formula: `SUM(C${currentRow}:Z${currentRow})` }];
+                        row.values = rowVals;
+                        row.height = 19;
+
+                        const isEven = idx % 2 === 1;
+                        row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                            if (colNumber > 27) return;
+                            cell.font = { name: 'Segoe UI', size: 10, bold: colNumber === 27, color: { argb: 'FF1E293B' } };
+                            if (colNumber === 27) {
+                                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F4FA' } };
+                            } else if (isEven) {
+                                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F8FF' } }; // Light blue alternating row
+                            } else {
+                                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFFF' } }; // White row
+                            }
+                            cell.alignment = { horizontal: colNumber === 2 ? 'left' : 'center', vertical: 'middle' };
+                            cell.border = thinBorder;
+                            if (colNumber >= 3) cell.numFmt = '#,##0';
+                        });
+                        currentRow++;
+                    });
+
+                    const endDataRow = currentRow - 1;
+
+                    // Section Footer Total Row with Dynamic Excel SUM Formulas
+                    const totalRow = ws.getRow(currentRow);
+                    const totalFormulas = ['Total', sec.title];
+                    for (let c = 3; c <= 27; c++) {
+                        const colLetter = ws.getColumn(c).letter;
+                        totalFormulas.push({ formula: `SUM(${colLetter}${startDataRow}:${colLetter}${endDataRow})` });
+                    }
+                    totalRow.values = totalFormulas;
+                    totalRow.height = 22;
+                    totalRow.eachCell((cell, colNumber) => {
+                        cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF05668D' } };
+                        cell.alignment = { horizontal: colNumber === 2 ? 'left' : 'center', vertical: 'middle' };
+                        cell.border = thinBorder;
+                        if (colNumber >= 3) cell.numFmt = '#,##0';
+                    });
+
+                    currentRow += 2; // Blank spacer row between restaurants
+                });
+
+                // Set Column Widths cleanly
+                ws.getColumn(1).width = 6;
+                ws.getColumn(2).width = 36;
+                for (let c = 3; c <= 26; c++) ws.getColumn(c).width = 6.5;
+                ws.getColumn(27).width = 11;
+
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Naif_Hourly_Sales_Report_${new Date().toISOString().slice(0,10)}.xlsx`;
+                a.click();
+                URL.revokeObjectURL(url);
+                statusMsg.innerText = 'تم تصدير ملف Excel بنجاح!';
+                setTimeout(() => statusMsg.innerText = '', 4000);
+            } catch (err) {
+                console.error(err);
+                statusMsg.innerText = '';
+                alert('حدث خطأ أثناء تصدير Excel: ' + err.message);
+            }
+        }
+
+        // Export Formatted PDF (Landscape A4 with Smart Section-by-Section Pagination & Company Header)
+        async function exportToPDFReport() {
+            if (!lastRenderedReport || !lastRenderedReport.sections.length) {
+                alert('الرجاء استخراج التقرير أولاً قبل التصدير إلى PDF.');
+                return;
+            }
+
+            const statusMsg = document.getElementById('export-status-msg');
+            statusMsg.innerText = 'جاري إنشاء ملف PDF منسق...';
+
+            const container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '-9999px';
+            container.style.width = '1122px'; // A4 Landscape width in px at 96dpi
+            container.style.background = '#ffffff';
+            container.style.direction = 'rtl';
+            container.style.fontFamily = "'Segoe UI', Tahoma, sans-serif";
+            document.body.appendChild(container);
+
+            const safeHeight = 750; // Safe height for A4 Landscape
+
+            function createPage(isFirstPage) {
+                const p = document.createElement('div');
+                p.style.width = '1122px';
+                p.style.padding = '24px';
+                p.style.background = '#ffffff';
+                p.style.boxSizing = 'border-box';
+                
+                p.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #05668D; padding-bottom:10px; margin-bottom:14px;">
+                        <div style="text-align:right;">
+                            <div style="font-size:18px; font-weight:800; color:#05668D;">شركة نايف للأغذية</div>
+                            <div style="font-size:13px; font-weight:700; color:#1e293b; margin-top:2px;">${lastRenderedReport.mainTitle}</div>
+                            ${isFirstPage ? `<div style="font-size:11px; color:#64748b; margin-top:2px;">${lastRenderedReport.subTitle}</div>` : ''}
+                        </div>
+                        <img src="https://i.postimg.cc/NM2zJWZD/NAIF-LOGO.jpg" crossorigin="anonymous" style="height:52px; border-radius:6px;">
+                    </div>
+                `;
+                container.appendChild(p);
+                return p;
+            }
+
+            let currentPage = createPage(true);
+
+            try {
+                for (const sec of lastRenderedReport.sections) {
+                    const secTitleDiv = document.createElement('div');
+                    secTitleDiv.style.cssText = 'background:#e6f4fa; border-right:4px solid #05668D; padding:6px 12px; font-size:12px; font-weight:bold; color:#034966; margin-bottom:4px; display:flex; justify-content:space-between;';
+                    secTitleDiv.innerHTML = `<span dir="ltr">${sec.title}</span><span>${sec.subtitle}</span>`;
+                    currentPage.appendChild(secTitleDiv);
+
+                    if (currentPage.offsetHeight > safeHeight) {
+                        currentPage.removeChild(secTitleDiv);
+                        currentPage = createPage(false);
+                        currentPage.appendChild(secTitleDiv);
+                    }
+
+                    function buildTableSkeleton() {
+                        const tbl = document.createElement('table');
+                        tbl.style.cssText = 'width:100%; border-collapse:collapse; font-size:9px; margin-bottom:14px; direction:ltr;';
+                        tbl.innerHTML = `
+                            <thead>
+                                <tr style="background:#05668D; color:white;">
+                                    <th style="border:1px solid #cbd5e1; padding:4px;">#</th>
+                                    <th style="border:1px solid #cbd5e1; padding:4px; text-align:left;">Meal Name</th>
+                                    ${Array.from({length:24}, (_, h) => `<th style="border:1px solid #cbd5e1; padding:3px;">${h}</th>`).join('')}
+                                    <th style="border:1px solid #cbd5e1; padding:4px; background:#034966;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        `;
+                        return tbl;
+                    }
+
+                    let table = buildTableSkeleton();
+                    currentPage.appendChild(table);
+                    let tbody = table.querySelector('tbody');
+
+                    sec.rows.forEach((r, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.style.background = idx % 2 === 1 ? '#f0f8ff' : '#ffffff';
+                        tr.innerHTML = `
+                            <td style="border:1px solid #cbd5e1; padding:3px; text-align:center;">${idx + 1}</td>
+                            <td style="border:1px solid #cbd5e1; padding:3px 6px; text-align:left; font-weight:600;">${r.meal}</td>
+                            ${r.hrs.map(v => `<td style="border:1px solid #cbd5e1; padding:3px; text-align:center;">${v !== 0 ? v : ''}</td>`).join('')}
+                            <td style="border:1px solid #cbd5e1; padding:3px; text-align:center; font-weight:bold; background:#e6f4fa; color:#05668D;">${r.rowTotal}</td>
+                        `;
+                        tbody.appendChild(tr);
+
+                        if (currentPage.offsetHeight > safeHeight) {
+                            tbody.removeChild(tr);
+                            currentPage = createPage(false);
+                            table = buildTableSkeleton();
+                            currentPage.appendChild(table);
+                            tbody = table.querySelector('tbody');
+                            tbody.appendChild(tr);
+                        }
+                    });
+
+                    // Total Row
+                    const totalTr = document.createElement('tr');
+                    totalTr.style.cssText = 'background:#05668D; color:white; font-weight:bold;';
+                    totalTr.innerHTML = `
+                        <td colspan="2" style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Total (${sec.title})</td>
+                        ${sec.colTotals.map(v => `<td style="border:1px solid #cbd5e1; padding:3px; text-align:center;">${v}</td>`).join('')}
+                        <td style="border:1px solid #cbd5e1; padding:4px; text-align:center; background:#034966;">${sec.grandRowSum}</td>
+                    `;
+                    tbody.appendChild(totalTr);
+
+                    if (currentPage.offsetHeight > safeHeight) {
+                        tbody.removeChild(totalTr);
+                        currentPage = createPage(false);
+                        table = buildTableSkeleton();
+                        currentPage.appendChild(table);
+                        table.querySelector('tbody').appendChild(totalTr);
+                    }
+                }
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('l', 'pt', 'a4'); // Landscape A4 to fit 24 hourly columns clearly
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pages = Array.from(container.children);
+
+                for (let i = 0; i < pages.length; i++) {
+                    const canvas = await html2canvas(pages[i], { scale: 2, useCORS: true });
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+                    if (i > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
+                }
+
+                pdf.save(`Naif_Sales_Report_${new Date().toISOString().slice(0,10)}.pdf`);
+                statusMsg.innerText = 'تم تصدير ملف PDF بنجاح!';
+                setTimeout(() => statusMsg.innerText = '', 4000);
+            } catch (err) {
+                console.error(err);
+                statusMsg.innerText = '';
+                alert('حدث خطأ أثناء تصدير PDF: ' + err.message);
+            } finally {
+                document.body.removeChild(container);
+            }
+        }
+
+        // Settings & Restaurants CRUD
+        function renderRestaurantsTable() {
+            const tbody = document.getElementById('restaurants-table-body');
+            const q = (document.getElementById('settings-search-input')?.value || '').trim().toLowerCase();
+            
+            const filtered = q 
+                ? restaurants.filter(r => r.site.toLowerCase().includes(q) || r.supervisor.toLowerCase().includes(q) || r.manager.toLowerCase().includes(q))
+                : restaurants;
+
+            tbody.innerHTML = filtered.map((r, idx) => `
+                <tr>
+                    <td class="font-mono">${idx + 1}</td>
+                    <td dir="ltr" class="font-bold text-gray-800 text-left">${r.site}</td>
+                    <td class="font-semibold text-gray-700">${r.supervisor}</td>
+                    <td>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${r.manager === 'هاني عبدالله' ? 'bg-cyan-100 petrol-text' : 'bg-amber-100 text-amber-800'}">
+                            ${r.manager}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="openRestaurantModal(${r.id})" title="تعديل" class="text-sky-700 hover:text-sky-900 mx-1.5 p-1"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                        <button onclick="deleteRestaurant(${r.id})" title="حذف" class="text-rose-600 hover:text-rose-800 mx-1.5 p-1"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openRestaurantModal(id = null) {
+            document.getElementById('restaurant-modal').classList.remove('hidden');
+            if (id) {
+                document.getElementById('modal-title').innerText = 'تعديل بيانات المطعم والمشرف';
+                const r = restaurants.find(x => x.id === id);
+                document.getElementById('edit-restaurant-id').value = r.id;
+                document.getElementById('modal-site-name').value = r.site;
+                document.getElementById('modal-supervisor').value = r.supervisor;
+                document.getElementById('modal-manager').value = r.manager;
+            } else {
+                document.getElementById('modal-title').innerText = 'إضافة مطعم جديد';
+                document.getElementById('edit-restaurant-id').value = '';
+                document.getElementById('modal-site-name').value = 'Site - ';
+                document.getElementById('modal-supervisor').value = '';
+                document.getElementById('modal-manager').value = 'هاني عبدالله';
+            }
+        }
+
+        function closeRestaurantModal() {
+            document.getElementById('restaurant-modal').classList.add('hidden');
+        }
+
+        function saveRestaurant() {
+            const id = document.getElementById('edit-restaurant-id').value;
+            const site = document.getElementById('modal-site-name').value.trim();
+            const supervisor = document.getElementById('modal-supervisor').value.trim();
+            const manager = document.getElementById('modal-manager').value;
+
+            if (!site || !supervisor) {
+                alert('الرجاء إدخال اسم المطعم واسم المشرف.');
+                return;
+            }
+
+            if (id) {
+                const r = restaurants.find(x => x.id == id);
+                if (r) {
+                    r.site = site;
+                    r.supervisor = supervisor;
+                    r.manager = manager;
+                }
+            } else {
+                const newId = restaurants.length > 0 ? Math.max(...restaurants.map(x => x.id)) + 1 : 1;
+                restaurants.push({ id: newId, site, supervisor, manager });
+            }
+
+            localStorage.setItem('naif_restaurants_v2', JSON.stringify(restaurants));
+            closeRestaurantModal();
+            renderRestaurantsTable();
+            updateDashboardStats();
+        }
+
+        function deleteRestaurant(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المطعم نهائياً؟')) {
+                restaurants = restaurants.filter(x => x.id !== id);
+                localStorage.setItem('naif_restaurants_v2', JSON.stringify(restaurants));
+                renderRestaurantsTable();
+                updateDashboardStats();
+            }
+        }
+    </script>
+</body>
+</html>
